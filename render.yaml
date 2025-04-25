@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ebook-store
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_APP
+        value: app.py
+      - key: SECRET_KEY
+        value: your_secret_key
+      - key: STRIPE_PUBLIC_KEY
+        value: your_stripe_public_key
+      - key: STRIPE_SECRET_KEY
+        value: your_stripe_secret_key
