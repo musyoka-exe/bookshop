@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Book - E-Book Store{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Edit Book</h2>
+    <a href="{{ url_for('admin_books') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Back to Books
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ book.title }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="author" class="form-label">Author</label>
+                <input type="text" class="form-control" id="author" name="author" value="{{ book.author }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="5" required>{{ book.description }}</textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="price" class="form-label">Price ($)</label>
+                <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" value="{{ book.price }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="ebook_file" class="form-label">E-Book File (PDF, EPUB, MOBI)</label>
+                <input class="form-control" type="file" id="ebook_file" name="ebook_file">
+                <div class="form-text">
+                    Current file: {{ book.file_path.split('/')[-1] }}<br>
+                    Leave empty to keep current file. Max file size: 32MB
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="cover_image" class="form-label">Cover Image</label>
+                <input class="form-control" type="file" id="cover_image" name="cover_image">
+                <div class="form-text">
+                    {% if book.cover_image %}
+                        Current cover: <img src="{{ url_for('static', filename=book.cover_image) }}" alt="Current cover" style="height: 60px;">
+                    {% else %}
+                        No current cover image.
+                    {% endif %}
+                    <br>Leave empty to keep current image. Recommended size: 400x600 pixels
+                </div>
+            </div>
+            
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Update Book</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

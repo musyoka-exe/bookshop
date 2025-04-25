@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} - E-Book Store{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="row g-0">
+        <div class="col-md-4">
+            {% if book.cover_image %}
+                <img src="{{ url_for('static', filename=book.cover_image) }}" class="img-fluid book-detail-img rounded-start" alt="{{ book.title }}">
+            {% else %}
+                <div class="bg-light book-detail-img d-flex align-items-center justify-content-center">
+                    <i class="fas fa-book fa-5x text-secondary"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h2 class="card-title">{{ book.title }}</h2>
+                <h5 class="card-subtitle mb-3 text-muted">by {{ book.author }}</h5>
+                
+                <p class="card-text">{{ book.description }}</p>
+                
+                <div class="price-tag mb-4">${{ "%.2f"|format(book.price) }}</div>
+                
+                <div class="d-flex flex-wrap gap-2">
+                    {% if current_user.is_authenticated %}
+                        <!-- Check if already purchased -->
+                        {% set purchased = current_user.purchases|selectattr("book_id", "equalto", book.id)|list|length > 0 %}
+                        
+                        {% if purchased %}
+                            <a href="{{ url_for('download', book_id=book.id) }}" class="btn btn-success">
+                                <i class="fas fa-download me-1"></i> Download
+                            </a>
+                        {% else %}
+                            <!-- Check if in cart -->
+                            {% set in_cart = current_user.cart|selectattr("book_id", "equalto", book.id)|list|length > 0 %}
+                            
+                            {% if in_cart %}
+                                <a href="{{ url_for('cart') }}" class="btn btn-primary">
+                                    <i class="fas fa-shopping-cart me-1"></i> In Cart
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('add_to_cart', book_id=book.id) }}" class="btn btn-primary">
+                                    <i class="fas fa-cart-plus me-1"></i> Add to Cart
+                                </a>
+                            {% endif %}
+                            
+                            <!-- Check if in favorites -->
+                            {% set in_favorites = current_user.favorites|selectattr("book_id", "equalto", book.id)|list|length > 0 %}
+                            
+                            {% if in_favorites %}
+                                {% set favorite = current_user.favorites|selectattr("book_id", "equalto", book.id)|first %}
+                                <a href="{{ url_for('remove_from_favorites', favorite_id=favorite.id) }}" class="btn btn-outline-danger">
+                                    <i class="fas fa-heart-broken me-1"></i> Remove from Favorites
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('add_to_favorites', book_id=book.id) }}" class="btn btn-outline-danger">
+                                    <i class="fas fa-heart me-1"></i> Add to Favorites
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login to Purchase
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-4">
+                    <p class="text-muted">
+                        <small>Added on {{ book.date_added.strftime('%B %d, %Y') }}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

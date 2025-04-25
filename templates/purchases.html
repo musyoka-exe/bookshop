@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Your Books - E-Book Store{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Your Purchased Books</h2>
+
+{% if purchases %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for purchase in purchases %}
+        <div class="col">
+            <div class="card h-100">
+                {% if purchase.book.cover_image %}
+                    <img src="{{ url_for('static', filename=purchase.book.cover_image) }}" class="card-img-top book-cover" alt="{{ purchase.book.title }}">
+                {% else %}
+                    <div class="bg-light book-cover d-flex align-items-center justify-content-center">
+                        <i class="fas fa-book fa-3x text-secondary"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ purchase.book.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ purchase.book.author }}</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-muted">Purchased on {{ purchase.date_purchased.strftime('%b %d, %Y') }}</small>
+                        <span class="badge bg-success">Paid</span>
+                    </div>
+                    <a href="{{ url_for('download', book_id=purchase.book.id) }}" class="btn btn-success w-100">
+                        <i class="fas fa-download me-1"></i> Download
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        You haven't purchased any books yet. <a href="{{ url_for('index') }}">Browse books</a> to make a purchase.
+    </div>
+{% endif %}
+{% endblock %}
